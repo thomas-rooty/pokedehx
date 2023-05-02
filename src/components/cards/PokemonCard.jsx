@@ -4,8 +4,13 @@ import styles from './cards.module.css'
 import {Link} from "react-router-dom"
 
 const PokemonCard = ({pokemon}) => {
-  // Get the id from the url
-  const id = pokemon.url.split('/')[6]
+  // Get the id from the url depending on the data source
+  let id = 0
+  if (pokemon.url) {
+    id = pokemon.url.split('/')[6]
+  } else {
+    id = pokemon.id
+  }
 
   // Fetch the details of the pokemon
   const [pokemonDetails, setPokemonDetails] = useState({})
