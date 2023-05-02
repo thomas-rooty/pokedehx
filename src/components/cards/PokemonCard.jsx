@@ -1,37 +1,51 @@
+import {useState, useEffect} from 'react'
+import {fetchDetailsPokemon} from '../../utils/fetchData.js'
 import styles from './cards.module.css'
-import {fetchDetailsPokemon} from "../../utils/fetchData.js"
-import {useState, useEffect} from "react";
+import {Link} from "react-router-dom"
 
 const PokemonCard = ({pokemon}) => {
-  // Get id of the Pokemon from the url for example "https://pokeapi.co/api/v2/pokemon/1/"
-  const id = pokemon.url.split("/")[6]
+  // Get the id from the url
+  const id = pokemon.url.split('/')[6]
 
-  // Get the details of the Pokemon
+  // Fetch the details of the pokemon
   const [pokemonDetails, setPokemonDetails] = useState({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const getPokemonDetails = async () => {
+    const fetchPokemonDetails = async () => {
       const data = await fetchDetailsPokemon(id)
       setPokemonDetails(data)
       setLoading(false)
     }
-    getPokemonDetails()
-  }, [pokemon.url])
+    fetchPokemonDetails()
+  }, [id])
+
+  // Render the types
+  const renderTypes = () => {
+    if (loading) return <h1>Loading...</h1>;
+    return pokemonDetails.types?.map((type, index) => (
+      <p key={index}>{type.type.name}</p>
+    ))
+  }
 
   return (
     <div className={styles.card}>
-      <div className={styles.card__img}>
-        {loading ? <h1>Loading...</h1> :
-          <img src={pokemonDetails.sprites?.front_default} alt={pokemon.name}/>
-        }
-      </div>
-      <div className={styles.card__name}>
-        <h3>{pokemon.name}</h3>
-      </div>
-      <div className={styles.card__types}>
-        {loading ? <h1>Loading...</h1> : pokemonDetails.types?.map((type, index) => <p key={index}>{type.type.name}</p>)}
-      </div>
+      <Link to={`/pokemon/${id}`} className={styles.card__link}>
+        <div className={styles.card__img}>
+          {loading ? (
+            <h1>Loading...</h1>
+          ) : (
+            <img
+              src={pokemonDetails.sprites?.front_default}
+              alt={pokemon.name}
+            />
+          )}
+        </div>
+        <div className={styles.card__name}>
+          <h3>{pokemon.name}</h3>
+        </div>
+        <div className={styles.card__types}>{renderTypes()}</div>
+      </Link>
     </div>
   )
 }
