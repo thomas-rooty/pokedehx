@@ -1,0 +1,8 @@
+.card__types {
+  display: flex;
+  flex-direction: row;
+}
+
+.card__types > p {
+  margin-right: 1rem;
+}
